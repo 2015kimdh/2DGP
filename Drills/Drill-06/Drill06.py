@@ -29,11 +29,11 @@ def calculate():
             x -= 2
         elif x < lx:
             x += 2
-        if (ly - y)/(lx - x)*2 >= 1 or (ly - y)/(lx - x)*2 <= -1:
+        if (ly - y)/(lx - x)*2 > 1 or (ly - y)/(lx - x)*2 < -1:
             y += (ly - y)/(lx - x)
-        elif (ly - y)/(lx - x)*2 < 1 and (ly - y)/(lx - x)*2 >= 0:
+        elif (lx - x) < 1 and (lx - x) >= 0:
             y += 1
-        elif (ly - y) / (lx - x) * 2 > -1 and (ly - y)/(lx - x)*2 <= 0:
+        elif (lx - x) > -1 and (lx - x)<= 0:
             y -= 1
     elif x == lx and y == ly:
         pass
