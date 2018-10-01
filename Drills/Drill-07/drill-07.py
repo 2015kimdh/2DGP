@@ -29,6 +29,7 @@ size = 20
 points = [(random.randint(100, 700), random.randint(100, 600)) for i in range(size)]
 n = 1
 
+
 while True:
 
     make_line(points[n-1], points[n])
