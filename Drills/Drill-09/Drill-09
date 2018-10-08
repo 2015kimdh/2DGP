@@ -4,13 +4,25 @@ import random
 # Game object class here
 class Ball:
     def __init__(self):
-        self.x, self.y = random.randint(100,700), 0
+        self.x, self.y = random.randint(100,700), 500
         self.frame = random.randint(0,1)
-        self.speed = random.randint(10,25)
+        self.speed = random.randint(5,15)
         if self.frame == 0:
             self.image = load_image('ball21x21.png')
         else:
             self.image = load_image('ball41x41.png')
+
+    def update(self):
+        if self.y > 30:
+            self.y -= self.speed
+        else:
+            self.y -= 0
+
+    def draw(self):
+        if self.frame == 0:
+            self.image.clip_draw(0, 0, 21, 21, self.x, self.y)
+        else:
+            self.image.clip_draw(0, 0, 41, 41, self.x, self.y)
 
 class Grass:
     def __init__(self):
@@ -49,6 +61,7 @@ open_canvas()
 
 grass = Grass()
 team = [Boy() for i in range(11)]
+fus = [Ball() for j in range(20)]
 running = True;
 # game main loop code
 
@@ -57,10 +70,17 @@ while running:
     for boy in team:
         boy.update()
 
+    for ball in fus:
+        ball.update()
+
     clear_canvas()
     grass.draw()
     for boy in team:
         boy.draw()
+
+    for ball in fus:
+        ball.draw()
+
     update_canvas()
 
     delay(0.05)
