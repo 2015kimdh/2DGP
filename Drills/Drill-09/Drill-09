@@ -2,6 +2,15 @@ from pico2d import *
 import random
 
 # Game object class here
+class Ball:
+    def __init__(self):
+        self.x, self.y = random.randint(100,700), 0
+        self.frame = random.randint(0,1)
+        self.speed = random.randint(10,25)
+        if self.frame == 0:
+            self.image = load_image('ball21x21.png')
+        else:
+            self.image = load_image('ball41x41.png')
 
 class Grass:
     def __init__(self):
