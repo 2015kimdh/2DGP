@@ -4,7 +4,8 @@ import main_state
 
 name = "TitleState"
 image = None
-
+global timer
+timer = 0
 
 def enter():
     global image
@@ -29,8 +30,15 @@ def handle_events():
 
 
 def draw():
+    global timer
     clear_canvas()
-    image.draw(400, 300)
+    if timer < 200 :
+        image.draw(400, 300)
+    timer += 1
+    if timer == 400 :
+        timer = 0
+    main_state.grass.draw()
+    main_state.boy.draw()
     update_canvas()
 
 def update():
