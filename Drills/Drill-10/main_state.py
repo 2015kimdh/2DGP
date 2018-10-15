@@ -6,6 +6,7 @@ from pico2d import *
 
 import game_framework
 import title_state
+import pause_state
 
 
 
@@ -42,7 +43,7 @@ class Boy:
             self.dir = 1
 
     def draw(self):
-        self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
+            self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
 
 
 def enter():
@@ -71,6 +72,8 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_state(title_state)
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_p:
+            game_framework.push_state(pause_state)
 
 
 def update():
