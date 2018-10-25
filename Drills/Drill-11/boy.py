@@ -3,7 +3,7 @@ from ball import Ball
 import game_world
 
 # Boy Event
-RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE, RSHIFT_DOWN, LSHIFT_DOWN, RSHIFT_UP, LSHIFT_UP = range(10)
+RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE, RSHIFT_DOWN, LSHIFT_DOWN, RSHIFT_UP, LSHIFT_UP, DASH_TIMER = range(11)
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RIGHT_DOWN,
@@ -67,12 +67,6 @@ class RunState:
             boy.velocity -= 1
         elif event == LEFT_UP:
             boy.velocity += 1
-        elif event == RSHIFT_UP:
-            boy.velocity -= 2
-            boy.dash_timer = 100
-        elif event == LSHIFT_UP:
-            boy.velocity += 2
-            boy.dash_timer = 100
         boy.dir = boy.velocity
 
     @staticmethod
@@ -98,16 +92,15 @@ class DashState:
 
     @staticmethod
     def enter(boy, event):
-        if event == RSHIFT_DOWN:
-            boy.velocity += 2
-        elif event == LSHIFT_DOWN:
-            boy.velocity -= 2
-        elif event == RSHIFT_UP:
-            boy.velocity -= 2
-            boy.dash_timer = 10
-        elif event == LSHIFT_UP:
-            boy.velocity += 2
-            boy.dash_timer = 10
+        if event == RIGHT_DOWN:
+            boy.velocity += 1
+        elif event == LEFT_DOWN:
+            boy.velocity -= 1
+        elif event == RIGHT_UP:
+            boy.velocity -= 1
+        elif event == LEFT_UP:
+            boy.velocity += 1
+        boy.dash_timer = 100
         boy.dir = boy.velocity
 
     @staticmethod
@@ -119,13 +112,11 @@ class DashState:
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
         boy.timer -= 1
-        if (boy.dash_timer > 0):
-            boy.x += boy.velocity
-        else:
-            if boy.velocity > 0:
-                boy.x += 1
-            else:
-                boy.x -= 1
+        boy.dash_timer -= 1
+        boy.x += boy.velocity*3
+        if boy.dash_timer == 0:
+            boy.add_event(DASH_TIMER)
+
         boy.x = clamp(25, boy.x, 1600 - 25)
 
     @staticmethod
@@ -134,8 +125,6 @@ class DashState:
             boy.image.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
         else:
             boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
-        if boy.dash_timer > 0:
-            boy.dash_timer -= 1
 
 
 class SleepState:
@@ -161,8 +150,8 @@ class SleepState:
 
 next_state_table = {
     IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState, RIGHT_DOWN: RunState, LEFT_DOWN: RunState, SLEEP_TIMER: SleepState, SPACE: IdleState, LSHIFT_DOWN: IdleState, RSHIFT_DOWN: IdleState, LSHIFT_UP: IdleState, RSHIFT_UP: IdleState},
-    RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: IdleState, LSHIFT_DOWN: DashState, RSHIFT_DOWN: DashState},
-    DashState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: IdleState, LSHIFT_UP: RunState, RSHIFT_UP: RunState},
+    RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: IdleState, LSHIFT_DOWN: DashState, RSHIFT_DOWN: DashState, LSHIFT_UP: RunState, RSHIFT_UP: RunState},
+    DashState: {RIGHT_UP: IdleState, LEFT_UP: IdleState, LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState, SPACE: IdleState, LSHIFT_UP: RunState, RSHIFT_UP: RunState, DASH_TIMER: RunState},
     SleepState: {LEFT_DOWN: RunState, RIGHT_DOWN: RunState, LEFT_UP: RunState, RIGHT_UP: RunState, SPACE: IdleState}
 }
 
