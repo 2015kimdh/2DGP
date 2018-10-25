@@ -1,21 +1,21 @@
-from pico2d import *
+import sys
 import random
-
-# Game object class here
+from pico2d import *
 
 class Grass:
     def __init__(self):
         self.image = load_image('grass.png')
+
     def draw(self):
         self.image.draw(400, 30)
 
+
 class Boy:
-    image = None
+
     def __init__(self):
-        self.x, self.y = random.randint(100,700), 90
-        self.frame = random.randint(0,7)
-        if Boy.image == None:
-            Boy.image = load_image('run_animation.png')
+        self.x, self.y = random.randint(100, 700), 90
+        self.frame = random.randint(0, 7)
+        self.image = load_image('run_animation.png')
 
 
     def update(self):
@@ -23,7 +23,8 @@ class Boy:
         self.x += 5
 
     def draw(self):
-        self.image.clip_draw(self.frame*100, 0, 100, 100, self.x, self.y)
+        self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
+
 
 def handle_events():
     global running
@@ -35,18 +36,17 @@ def handle_events():
             running = False
 
 
-
-# initialization code
-
 open_canvas()
 
-grass = Grass()
-team = [Boy() for i in range(10000)]
-running = True;
-# game main loop code
+team = [Boy() for i in range(1000)]
 
+
+grass = Grass()
+
+running = True;
 while running:
     handle_events()
+
     for boy in team:
         boy.update()
 
@@ -56,7 +56,6 @@ while running:
         boy.draw()
     update_canvas()
 
-    delay(0.005)
-# finalization code
+    delay(0.05)
 
 close_canvas()
