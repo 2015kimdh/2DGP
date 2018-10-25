@@ -102,7 +102,7 @@ class DashState:
             boy.velocity += 1
         boy.dash_timer = 100
         boy.dir = boy.velocity
-
+ 
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
