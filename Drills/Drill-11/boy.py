@@ -3,15 +3,20 @@ from ball import Ball
 import game_world
 
 # Boy Event
-RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE = range(6)
+RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, SLEEP_TIMER, SPACE, RSHIFT_DOWN, LSHIFT_DOWN, RSHIFT_UP, LSHIFT_UP = range(8)
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RIGHT_DOWN,
     (SDL_KEYDOWN, SDLK_LEFT): LEFT_DOWN,
-    (SDL_KEYUP, SDLK_RIGHT): RIGHT_UP,
+    (SDL_KEYUP, SDLK_RIGHT): RIGHT_UP,UP
     (SDL_KEYUP, SDLK_LEFT): LEFT_UP,
-    (SDL_KEYDOWN, SDLK_SPACE): SPACE
+    (SDL_KEYDOWN, SDLK_SPACE): SPACE,
+    (SDL_KEYDOWN, SDLK_RSHIFT): RSHIFT_DOWN,
+    (SDL_KEYDOWN, SDLK_LSHIFT): LSHIFT_DOWN,
+    (SDL_KEYUP, SDLK_RSHIFT): RSHIFT_UP,
+    (SDL_KEYUP, SDLK_LSHIFT): LSHIFT_UP
 }
+
 
 
 # Boy States
@@ -83,6 +88,41 @@ class RunState:
         else:
             boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
 
+class DashState:
+
+    @staticmethod
+    def enter(boy, event):
+        if event == RSHIFT_DOWN:
+            boy.velocity += 2
+        elif event == LSHIFT_DOWN:
+            boy.velocity -= 2
+        elif event == RSHIFT_UP:
+            boy.velocity -= 2
+            boy.dash_timer = 100
+        elif event == LSHIFT_UP:
+            boy.velocity += 2
+            boy.dash_timer = 100
+        boy.dir = boy.velocity
+
+    @staticmethod
+    def exit(boy, event):
+        if event == SPACE:
+            boy.fire_ball()
+
+    @staticmethod
+    def do(boy):
+        boy.frame = (boy.frame + 1) % 8
+        boy.timer -= 1
+        boy.x += boy.velocity
+        boy.x = clamp(25, boy.x, 1600 - 25)
+
+    @staticmethod
+    def draw(boy):
+        if boy.velocity == 1:
+            boy.image.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
+        else:
+            boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
+
 
 class SleepState:
     @staticmethod
@@ -116,6 +156,7 @@ class Boy:
     def __init__(self):
         self.x, self.y = 1600 // 2, 90
         self.image = load_image('animation_sheet.png')
+        self.dash_timer = 0
         self.dir = 1
         self.velocity = 0
         self.frame = 0
