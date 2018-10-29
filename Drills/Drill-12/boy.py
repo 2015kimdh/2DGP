@@ -1,6 +1,7 @@
 import game_framework
 from pico2d import *
 from ball import Ball
+import random
 
 import game_world
 
@@ -106,7 +107,7 @@ class SleepState:
     @staticmethod
     def enter(boy, event):
         boy.frame = 0
-
+        boy.angle = 0
     @staticmethod
     def exit(boy, event):
         pass
@@ -114,6 +115,8 @@ class SleepState:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        boy.angle = (boy.angle + 12)%360
+        boy.gimage.opacify(random.randint(1,10)*0.1)
 
     @staticmethod
     def draw(boy):
@@ -121,8 +124,7 @@ class SleepState:
             boy.image.clip_composite_draw(int(boy.frame) * 100, 300, 100, 100, 3.141592 / 2, '', boy.x - 25, boy.y - 25, 100, 100)
         else:
             boy.image.clip_composite_draw(int(boy.frame) * 100, 200, 100, 100, -3.141592 / 2, '', boy.x + 25, boy.y - 25, 100, 100)
-
-
+        boy.gimage.clip_draw(int(boy.frame) * 100, 200, 100, 100, boy.x + 100 * math.cos(math.radians(boy.angle)), boy.y + 100 * math.sin(math.radians(boy.angle)))
 
 
 
@@ -146,6 +148,8 @@ class Boy:
         self.event_que = []
         self.cur_state = IdleState
         self.cur_state.enter(self, None)
+        self.gimage = load_image('animation_sheet.png')
+        self.angle = 0
 
 
     def fire_ball(self):
