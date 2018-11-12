@@ -60,16 +60,19 @@ class Zombie:
             self.speed = 0
             return BehaviorTree.FAIL
 
-    def move_to_player(self):   
+    def move_to_player(self):
         self.speed = RUN_SPEED_PPS
         return BehaviorTree.SUCCESS
 
     def build_behavior_tree(self):
+        wander_node = LeafNode('Wander', self.wander)
         find_player_node = LeafNode("Find Player", self.find_player)
         move_to_player_node = LeafNode("Move to Player", self.move_to_player)
         chase_node = SequenceNode('Chase')
         chase_node.add_children(find_player_node, move_to_player_node)
-        self.bt = BehaviorTree(chase_node)
+        wander_chase_node = SelectorNode("WanderChase")
+        wander_chase_node.add_children(chase_node, wander_node)
+        self.bt = BehaviorTree(wander_chase_node)
 
 
     def get_bb(self):
