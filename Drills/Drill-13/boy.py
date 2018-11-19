@@ -78,7 +78,7 @@ class WalkingState:
         boy.blocked = 0
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
 
-        for i in range (100):
+        for i in range (100): 
             cx = boy.x - ((1-i/100)*RHIGH_FANCE_X + (i/100)*RLOW_FANCE_X)
             cy = boy.y - ((1-i/100)*RHIGH_FANCE_Y + (i/100)*RLOW_FANCE_Y)
             if cx*cx + cy*cy < 100:
