@@ -10,6 +10,15 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
+RHIGH_FANCE_X = 200
+RHIGH_FANCE_Y = 1100
+LHIGH_FANCE_X = 1600
+LHIGH_FANCE_Y = 1100
+RLOW_FANCE_X = 20
+RLOW_FANCE_Y = 100
+LLOW_FANCE_X = 1800
+LLOW_FANCE_Y = 100
+
 # Boy Action Speed
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -66,9 +75,37 @@ class WalkingState:
 
     @staticmethod
     def do(boy):
+        boy.blocked = 0
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
-        boy.x += boy.x_velocity * game_framework.frame_time
-        boy.y += boy.y_velocity * game_framework.frame_time
+
+        for i in range (100):
+            cx = boy.x - ((1-i/100)*RHIGH_FANCE_X + (i/100)*RLOW_FANCE_X)
+            cy = boy.y - ((1-i/100)*RHIGH_FANCE_Y + (i/100)*RLOW_FANCE_Y)
+            if cx*cx + cy*cy < 100:
+                boy.blocked = 1
+                boy.x += 1
+        for i in range(100):
+            cx = boy.x - ((1 - i / 100) * LHIGH_FANCE_X + (i / 100) * LLOW_FANCE_X)
+            cy = boy.y - ((1 - i / 100) * LHIGH_FANCE_Y + (i / 100) * LLOW_FANCE_Y)
+            if cx * cx + cy * cy < 100:
+                boy.blocked = 1
+                boy.x -= 1
+        for i in range(100):
+            cx = boy.x - ((1 - i / 100) * LHIGH_FANCE_X + (i / 100) * RHIGH_FANCE_X)
+            cy = boy.y - ((1 - i / 100) * LHIGH_FANCE_Y + (i / 100) * RHIGH_FANCE_Y)
+            if cx * cx + cy * cy < 100:
+                boy.blocked = 1
+                boy.y -= 1
+        for i in range(100):
+            cx = boy.x - ((1 - i / 100) * LLOW_FANCE_X + (i / 100) * RLOW_FANCE_X)
+            cy = boy.y - ((1 - i / 100) * LLOW_FANCE_Y + (i / 100) * RLOW_FANCE_Y)
+            if cx * cx + cy * cy < 100:
+                boy.blocked = 1
+                boy.y += 1
+
+        if boy.blocked == 0:
+            boy.x += boy.x_velocity * game_framework.frame_time
+            boy.y += boy.y_velocity * game_framework.frame_time
         # fill here
 
 
@@ -118,6 +155,7 @@ class Boy:
         self.event_que = []
         self.cur_state = WalkingState
         self.cur_state.enter(self, None)
+        self.blocked = 0
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
