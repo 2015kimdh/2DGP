@@ -130,11 +130,15 @@ class Boy:
         self.start_time = get_time()
 
     def __getstate__(self):
+        state = {'x' : self.x, 'y':self.y, 'dir': self.dir, 'cur_state':self.cur_state}
+        return state
         # fill here
         pass
 
 
     def __setstate__(self, state):
+        self.__init__()
+        self.__dict__.update(state)
         # fill here
         pass
 

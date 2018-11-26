@@ -45,11 +45,15 @@ class Zombie:
         self.build_behavior_tree()
 
     def __getstate__(self):
+        state = {'x':self.x, 'y': self.y, 'dir':self.dir, 'name':self.name, 'size':self.size}
+        return state
         # fill here
         pass
 
 
     def __setstate__(self, state):
+        self.__init__()
+        self.__dict__.update(state)
         # fill here
         pass
 
